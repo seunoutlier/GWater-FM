@@ -18,7 +18,7 @@ mean absolute error of 3.63 metres, demonstrating that Earth system
 variables can explain nearly all the variance in global groundwater 
 depth. However, when the same model is trained on non-African data 
 and tested on African wells, performance collapses to R² = -2.13 and 
-MAE of 28.90 metres — performing worse than predicting the mean. 
+MAE of 28.90 metres performing worse than predicting the mean. 
 Current ML approaches trained on globally available data cannot serve 
 Africa. A fundamentally different approach is needed.
 
