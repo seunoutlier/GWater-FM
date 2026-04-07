@@ -12,15 +12,13 @@ global groundwater monitoring data. Nigeria, home to Lagos with
 15 million people dependent on groundwater, has just 14 monitored 
 wells in the global dataset compared to 101,003 in the United States.
 
-An XGBoost model trained on a stratified sample of 86,135 groundwater 
-observations spanning 23 climate zones achieves an R² of 0.98 and a 
-mean absolute error of 3.63 metres, demonstrating that Earth system 
-variables can explain nearly all the variance in global groundwater 
-depth. However, when the same model is trained on non-African data 
-and tested on African wells, performance collapses to R² = -2.13 and 
-MAE of 28.90 metres performing worse than predicting the mean. 
-Current ML approaches trained on globally available data cannot serve 
-Africa. A fundamentally different approach is needed.
+We tested whether standard ML models trained on global data can 
+predict African groundwater. An XGBoost model achieves R² = 0.98 
+globally but collapses to R² = -2.13 on Africa. An LSTM achieves 
+R² = 0.45 globally but collapses to R² = -1.69 on Africa. Both 
+models fail catastrophically, performing worse than predicting the 
+mean. Current ML approaches cannot serve the continent where 
+groundwater monitoring is most scarce and water security most urgent.
 
 ## Approach
 
@@ -48,18 +46,25 @@ Africa. A fundamentally different approach is needed.
 
 ### Baseline Model Performance
 
-| Experiment | R² | MAE |
-|-----------|-----|-----|
-| Global baseline (stratified, 23 climate zones) | 0.9784 | 3.63 m |
-| Naive transfer to Africa | -2.1277 | 28.90 m |
+| Model | Global R² | Africa R² | Africa MAE |
+|-------|-----------|-----------|------------|
+| XGBoost (13 static + lagged features) | 0.9784 | -2.1277 | 28.90 m |
+| LSTM (5 temporal features) | 0.4480 | -1.6909 | 19.31 m |
+
+Both models fail on Africa, confirming that neither static geological 
+features alone nor temporal dynamics alone can bridge the transfer gap. 
+A foundation model combining both is needed.
 
 ### Transfer Failure by African Country
 
-| Country | MAE | Samples |
-|---------|-----|---------|
+| Country | MAE (XGBoost) | Samples |
+|---------|---------------|---------|
 | Rwanda | 18.09 m | 11 |
 | South Africa | 27.62 m | 287 |
 | Namibia | 34.86 m | 82 |
+
+Failure scales with aridity: Namibia (arid desert) shows the worst 
+error, while Rwanda (tropical highland) is least affected.
 
 ### Feature Importance: Geological Variables Dominate
 
@@ -97,30 +102,32 @@ settings where Africa needs predictions most.
   globally, pushing predictions outside the training distribution
 - **Shorter records**: African time series are 40% shorter than the 
   global median, limiting fine-tuning signal
-- **Catastrophic transfer failure**: Naive transfer yields R² = -2.13, 
-  confirming that climate-blind and geology-blind models cannot serve 
-  data-scarce regions
+- **Catastrophic transfer failure**: Both XGBoost (R² = -2.13) and 
+  LSTM (R² = -1.69) fail on Africa, proving the problem is 
+  fundamental, not architecture-specific
 
 ## Why a Foundation Model?
 
-The naive transfer experiment proves that simply training on global 
-data and applying to Africa does not work. GWater-FM will address this 
-through:
+The baseline experiments prove that neither static geological features 
+(XGBoost) nor temporal dynamics (LSTM) alone can bridge the Africa 
+transfer gap. GWater-FM will combine both through:
 
 1. **Climate conditioning**: Embedding climate zone information so the 
    model learns different groundwater behaviours for different settings
 2. **Geology-aware representations**: Using aquifer type, porosity, and 
    permeability as architectural inputs, not just features
-3. **Physics-informed constraints**: Enforcing known relationships 
+3. **Temporal encoding**: Processing multi-year sequences of Earth 
+   system forcing to capture lag effects and trends
+4. **Physics-informed constraints**: Enforcing known relationships 
    (e.g., recharge cannot exceed precipitation) to prevent wild errors
-4. **Self-supervised pretraining**: Learning groundwater dynamics by 
+5. **Self-supervised pretraining**: Learning groundwater dynamics by 
    predicting masked time steps, building transferable understanding 
    before fine-tuning on sparse African data
 
 ## Project Roadmap
 
 - [x] Phase 1: GROW data exploration and African data assessment
-- [x] Phase 2: Stratified baseline model and transfer experiment
+- [x] Phase 2: Baseline models (XGBoost + LSTM) and transfer experiments
 - [ ] Phase 3: Foundation model architecture design
 - [ ] Phase 4: Pretraining on full global dataset (204,292 wells)
 - [ ] Phase 5: Transfer learning to African aquifer systems
