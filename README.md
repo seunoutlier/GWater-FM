@@ -47,11 +47,11 @@ Neither static geological features alone nor temporal dynamics alone bridge the 
 
 ### Transfer Failure by African Country (XGBoost)
 
-| Country       | MAE (m)   | Samples |
-|---------------|-----------|---------|
-| Rwanda (RWA)  | 18.09     | 11      |
-| South Africa (ZAF) | 27.62 | 287     |
-| Namibia (NAM) | 34.86     | 82      |
+| Country            | MAE (m)   | Samples |
+|---------------     |-----------|---------|
+| Rwanda (RWA)       | 18.09     | 11      |
+| South Africa (ZAF) | 27.62     | 287     |
+| Namibia (NAM)      | 34.86     | 82      |
 
 Errors scale with aridity—worst in arid Namibia, relatively better in tropical/highland Rwanda.
 
