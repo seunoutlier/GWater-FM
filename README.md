@@ -51,12 +51,11 @@ Transfer success correlates with sample size and hydrogeological similarity to t
 - **Pretrain** on >200,000 global groundwater time series paired with 36+ Earth system variables (GROW dataset, Bäthge et al., 2026).
 - Learn transferable, **climate-aware** and **geology-aware** representations of groundwater dynamics through masked time-step prediction.
 - **Transfer** learned representations to data-scarce African aquifer systems via partial fine-tuning.
-- Validate against field observations from Lagos, Nigeria.
+- **Evaluate** on held-out African test wells across 10 countries, never seen during training or fine-tuning.
 
 ## Architecture
 
 GWater-FM is a **Temporal Transformer with Static Cross-Attention**, designed to fuse the two key insights from baseline experiments: geological features carry strong predictive signal (XGBoost finding) and temporal dynamics matter (LSTM finding).
-
 
 **Key architectural components:**
 
@@ -163,8 +162,16 @@ Baselines confirm that static geology (XGBoost) or temporal dynamics (LSTM) alon
 - [x] **Phase 3**: Foundation model architecture design (temporal transformer + static cross-attention + physics module)
 - [x] **Phase 4**: Pretraining on global dataset (200,754 non-African wells, 11,484 steps, final loss 2.05)
 - [x] **Phase 5**: Transfer learning to Africa (R² = +0.16, MAE = 13.27 m — first positive R² on this task)
-- [ ] **Phase 6**: Validation against Lagos field data
-- [ ] **Phase 7**: Open-source release with documentation and inference tools
+- [ ] **Phase 6**: Open-source release with documentation and inference tools
+
+## Future Work
+
+- **Independent field validation** — Validate GWater-FM predictions against field observations from Lagos, Nigeria (Olabode & Comte 2024, 2025) and other African sites by matching field locations with GROW Earth system variables.
+- **Regional fine-tuning** — Develop region-specific models for West Africa, Southern Africa, and the Sahel with higher-resolution geological inputs.
+- **Operational forecasting** — Build a real-time groundwater early warning system ingesting satellite-derived precipitation and ET data.
+- **Expanding beyond Africa** — Test transfer to other data-scarce regions (South Asia, Central Asia, South America).
+- **Uncertainty quantification** — Add ensemble or Monte Carlo dropout methods to provide prediction confidence intervals.
+- **Higher temporal resolution** — Incorporate monthly or daily GROW data where available to capture sub-annual dynamics.
 
 ## Technical Details
 
@@ -199,8 +206,6 @@ Baselines confirm that static geology (XGBoost) or temporal dynamics (LSTM) alon
 
 - **GROW dataset** (primary): Bäthge et al. (2026). "A Global-Scale Time Series Dataset for Groundwater Studies within the Earth System." *Scientific Data*, 13:401. DOI: [10.5281/zenodo.15149480](https://doi.org/10.5281/zenodo.15149480).
   (204,292 wells from 55 countries with associated Earth system variables.)
-
-- **Lagos validation data**: Olabode & Comte (2024, 2025).
 
 ## Related Repositories
 
